@@ -218,7 +218,8 @@ export const getAssignedLeads = async (req, res) => {
 
     const assignedLeads = await Lead.find({ assignedTo: managerId })
       .populate("assignedTo", "username email")
-      .populate("assignedBy", "username email");
+      .populate("assignedBy", "username email")
+      .populate("comments.postedBy", "username"); 
 
     res.json(assignedLeads);
   } catch (error) {
@@ -226,6 +227,26 @@ export const getAssignedLeads = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const addLeadComment = async (req, res) => {
+  try {
+    const { text } = req.body;
+    const lead = await Lead.findById(req.params.leadId);
+    
+    lead.comments.push({ text, postedBy: req.user.id });
+    await lead.save();
+
+    // <--- FETCH AND POPULATE BEFORE SENDING BACK TO FRONTEND
+    const populatedLead = await Lead.findById(lead._id)
+      .populate("comments.postedBy", "username");
+
+    res.status(200).json(populatedLead);
+  } catch (error) { 
+    res.status(500).json({ message: "Error adding comment" }); 
+  }
+};
+
 
 export const getNewLeads = async (req, res) => {
   try {
@@ -246,6 +267,7 @@ export const getAllAssignedLeads = async (req, res) => {
     const assignedLeads = await Lead.find({ assignedTo: { $ne: null } })
       .populate("assignedTo", "username email")
       .populate("assignedBy", "username email")
+      .populate("comments.postedBy", "username") 
       .sort({ assignedAt: -1 });
     res.json(assignedLeads);
   } catch (error) {
@@ -477,4 +499,28 @@ export const getTeamLeads = async (req, res) => {
     console.error("Error fetching team leads:", error);
     res.status(500).json({ message: "Server error while fetching team leads" });
   }
+};
+
+
+
+// // Add Comment
+// export const addLeadComment = async (req, res) => {
+//   try {
+//     const { text } = req.body;
+//     const lead = await Lead.findById(req.params.leadId);
+//     lead.comments.push({ text, postedBy: req.user.id });
+//     await lead.save();
+//     res.status(200).json(lead);
+//   } catch (error) { res.status(500).json({ message: "Error adding comment" }); }
+// };
+
+
+
+// Update Follow-up Date
+export const updateFollowUp = async (req, res) => {
+  try {
+    const { followUpDate } = req.body;
+    const lead = await Lead.findByIdAndUpdate(req.params.leadId, { followUpDate }, { new: true });
+    res.status(200).json(lead);
+  } catch (error) { res.status(500).json({ message: "Error updating follow up" }); }
 };

@@ -16,7 +16,7 @@ const LeadSchema = new Schema({
   currencySymbol: { type: String, required: false },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   leadOwner: { type: String, required: true },
-  status: { type: String, enum: ["ongoing", "closed"], default: "ongoing" },
+  status: { type: String, enum: ["ongoing", "closed", "dropped"], default: "ongoing" },
   assignedTo: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -29,6 +29,14 @@ const LeadSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   closedAt: { type: Date },
   assignedAt: { type: Date },
+  comments: [
+    {
+      text: { type: String, required: true },
+      postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      postedAt: { type: Date, default: Date.now }
+    }
+  ],
+  followUpDate: { type: Date, default: null },
 });
 
 export default model("Lead", LeadSchema);

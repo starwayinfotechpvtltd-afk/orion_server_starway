@@ -17,6 +17,8 @@ import {
   getRecentLeads,
   getClosedLeadsByDate,
   getTeamLeads,
+  addLeadComment,
+  updateFollowUp,
 } from "../Controllers/leadController.js";
 import Lead from "../Models/Lead.js";
 
@@ -39,6 +41,8 @@ router.get("/new-leads-this-month", getNewLeadsThisMonth);
 router.get("/recent-leads", getRecentLeads);
 router.get("/closed-leads-by-date", getClosedLeadsByDate);
 router.get("/team-leads", verifyToken, getTeamLeads);
+router.post("/:leadId/comments", verifyToken, addLeadComment);
+router.put("/:leadId/follow-up", verifyToken, updateFollowUp);
 
 // routes with controller
 router.get("/lead-trends", async (req, res) => {
