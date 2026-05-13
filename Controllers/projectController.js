@@ -36,7 +36,7 @@ export const createProject = async (req, res) => {
       clientEmail,
       clientNumber,
       amount,
-      assignedDeveloper, // Directly assign the array here
+      assignedDeveloper, 
       serviceType,
       referenceSite,
       businessNiche,
