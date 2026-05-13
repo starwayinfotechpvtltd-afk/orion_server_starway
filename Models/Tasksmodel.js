@@ -1,4 +1,3 @@
-//  this ooe is for the projects tasks
 
 
 import mongoose from "mongoose";

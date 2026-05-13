@@ -48,7 +48,7 @@ import {
   getComments,
   createComment,
   deleteComment,
-} from "../Controllers/CommentController.js";
+} from "../Controllers/Commentcontroller.js";
 import { verifyToken } from "../Middlewares/AuthMiddleware.js";
 
 const router = express.Router();

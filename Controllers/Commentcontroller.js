@@ -3,9 +3,6 @@ import { Task } from "../Models/Tasksmodel.js";
 import Project from "../Models/ProjectModel.js";
 import UserModel from "../Models/UserModel.js";
 
-// ── Inline Comment schema (stored inside Task documents as a sub-collection) ──
-// We use a separate Mongoose model backed by a "taskcomments" collection
-// so that comments don't bloat the Task document itself.
 
 const CommentSchema = new mongoose.Schema(
   {
