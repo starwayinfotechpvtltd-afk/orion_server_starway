@@ -8,7 +8,6 @@ const ProjectSchema = new mongoose.Schema(
     clientEmail: { type: String, required: false },
     clientNumber: { type: String, required: true },
     amount: { type: Number, required: true },
-    // Converted to an array of objects to support multiple developers
     assignedDeveloper: [
       {
         id: { type: String, required: true },
