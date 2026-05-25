@@ -9,13 +9,13 @@ export const addLead = async (req, res) => {
       email,
       website,
       phoneNumber,
-      designation,
       country,
       packages,
       leadType,
       note,
       pitchedAmount,
       currencySymbol,
+      followUpDate
     } = req.body;
 
     const user = await UserModel.findById(req.user.id);
@@ -28,12 +28,12 @@ export const addLead = async (req, res) => {
       email,
       website,
       phoneNumber,
-      designation,
       country,
       packages,
       leadType,
       note,
       pitchedAmount,
+      followUpDate,
       currencySymbol,
       userId: req.user.id,
       leadOwner: user.username,

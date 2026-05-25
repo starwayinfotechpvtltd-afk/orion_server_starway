@@ -4,7 +4,7 @@ const { Schema, model } = mongoose;
 
 const LeadSchema = new Schema({
   leadName: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: false },
   website: { type: String, required: false },
   phoneNumber: { type: String, required: true },
   designation: { type: String, required: false },
@@ -12,7 +12,7 @@ const LeadSchema = new Schema({
   packages: { type: [String], required: true },
   leadType: { type: String, required: true },
   note: { type: String, required: true },
-  pitchedAmount: { type: Number, required: true },
+  pitchedAmount: { type: Number, required: false },
   currencySymbol: { type: String, required: false },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   leadOwner: { type: String, required: true },
