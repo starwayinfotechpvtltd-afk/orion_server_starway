@@ -125,7 +125,6 @@ router.get("/admins-managers", verifyToken, async (req, res) => {
   }
 });
 
-export default router;
 
 // get only users with developer role
 router.get("/developers", verifyToken, async (req, res) => {
@@ -284,3 +283,8 @@ router.delete(
     }
   }
 );
+
+
+
+
+export default router;
