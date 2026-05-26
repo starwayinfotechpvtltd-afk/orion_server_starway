@@ -15,7 +15,8 @@ export const addLead = async (req, res) => {
       note,
       pitchedAmount,
       currencySymbol,
-      followUpDate
+      followUpDate,
+      assignedTo 
     } = req.body;
 
     const user = await UserModel.findById(req.user.id);
@@ -37,6 +38,9 @@ export const addLead = async (req, res) => {
       currencySymbol,
       userId: req.user.id,
       leadOwner: user.username,
+      assignedTo: assignedTo || null,
+      assignedBy: assignedTo ? req.user.id : null,
+      assignedAt: assignedTo ? new Date() : null,
     });
 
     await newLead.save();
