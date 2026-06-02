@@ -5,6 +5,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import ReportRoutes from "./Routes/ReportRoutes.js"; 
 
 // DB
 import connectDB from "./Config/Mongodb.js";
@@ -115,6 +116,7 @@ app.use("/api/auth", AuthRoutes);
 app.use("/api/dashboard", DashboardRoutes);
 app.use("/api", taskRoutes);
 app.use("/api/leads", leadRoutes);
+app.use("/api/reports", ReportRoutes); 
 app.use("/api/newproject", projectRoutes);
 app.use("/api", EventRoutes);
 app.use("/api", serviceTypeRoutes);
