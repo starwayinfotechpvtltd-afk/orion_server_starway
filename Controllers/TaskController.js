@@ -331,7 +331,30 @@ export const getProjectTasks = async (req, res) => {
       if (!role) return res.status(403).json({ message: "Not authorized" });
     }
 
-    const tasks = await Task.find({ projectId }).sort({ createdAt: -1 });
+    const tasks = await Task.find({ projectId }).sort({ createdAt: -1 }).lean();
+
+    // -- MANUALLY ATTACH AVATARS --
+    const userIds = new Set();
+    tasks.forEach(t => {
+        if (t.assignedTo?.id) userIds.add(t.assignedTo.id.toString());
+        if (t.createdBy?.id) userIds.add(t.createdBy.id.toString());
+    });
+
+    if (userIds.size > 0) {
+        const users = await UserModel.find({ _id: { $in: Array.from(userIds) } }).select("avatar").lean();
+        const avatarMap = {};
+        users.forEach(u => avatarMap[u._id.toString()] = u.avatar);
+
+        tasks.forEach(t => {
+            if (t.assignedTo?.id && avatarMap[t.assignedTo.id.toString()]) {
+                t.assignedTo.avatar = avatarMap[t.assignedTo.id.toString()];
+            }
+            if (t.createdBy?.id && avatarMap[t.createdBy.id.toString()]) {
+                t.createdBy.avatar = avatarMap[t.createdBy.id.toString()];
+            }
+        });
+    }
+
     res.status(200).json(tasks);
   } catch (error) {
     console.error("getProjectTasks error:", error);
@@ -530,6 +553,12 @@ export const deleteTask = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
 // ── GET /api/tasks/:projectId/completions ─────────────────────────────────────
 export const getProjectCompletions = async (req, res) => {
   try {
@@ -544,7 +573,26 @@ export const getProjectCompletions = async (req, res) => {
       if (!role) return res.status(403).json({ message: "Not authorized" });
     }
 
-    const completions = await TaskCompletion.find({ projectId }).sort({ completedAt: -1 });
+    const completions = await TaskCompletion.find({ projectId }).sort({ completedAt: -1 }).lean();
+
+    // -- MANUALLY ATTACH AVATARS --
+    const userIds = new Set();
+    completions.forEach(c => {
+        if (c.completedBy?.id) userIds.add(c.completedBy.id.toString());
+    });
+
+    if (userIds.size > 0) {
+        const users = await UserModel.find({ _id: { $in: Array.from(userIds) } }).select("avatar").lean();
+        const avatarMap = {};
+        users.forEach(u => avatarMap[u._id.toString()] = u.avatar);
+
+        completions.forEach(c => {
+            if (c.completedBy?.id && avatarMap[c.completedBy.id.toString()]) {
+                c.completedBy.avatar = avatarMap[c.completedBy.id.toString()];
+            }
+        });
+    }
+
     res.status(200).json(completions);
   } catch (error) {
     console.error("getProjectCompletions error:", error);
