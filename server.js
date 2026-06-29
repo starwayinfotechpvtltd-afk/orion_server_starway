@@ -21,6 +21,8 @@ import serviceTypeRoutes from "./Routes/serviceTypeRoutes.js";
 import DocumentRoutes from "./Routes/DocumentRoutes.js";
 import tasksRoutes from "./Routes/Tasksroutes.js";
 import TeamRoutes from "./Routes/TeamRoutes.js";
+import scheduledTaskRoutes from "./Routes/scheduledTaskRoutes.js";
+
 
 const app = express();
 const PORT = process.env.PORT;
@@ -122,6 +124,8 @@ app.use("/api", serviceTypeRoutes);
 app.use("/api/docs", DocumentRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/teams", TeamRoutes);
+app.use("/api/scheduled-tasks", scheduledTaskRoutes);
+
 // ================= FILE UPLOAD =================
 app.post("/api/upload", upload.array("images", 10), (req, res) => {
   try {
