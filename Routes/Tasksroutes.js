@@ -34,8 +34,12 @@ router.delete("/:projectId/:taskId/comments/:commentId", deleteComment);
 
 export default router;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Register in app.js / server.js:
-//   import taskRoutes from "./Routes/taskRoutes.js";
-//   app.use("/api/tasks", taskRoutes);
-// ─────────────────────────────────────────────────────────────────────────────
+
+
+
+
+
+
+
+
+

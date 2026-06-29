@@ -18,7 +18,6 @@ import leadRoutes from "./Routes/leadRoutes.js";
 import projectRoutes from "./Routes/projectRoutes.js";
 import EventRoutes from "./Routes/EventRoutes.js";
 import serviceTypeRoutes from "./Routes/serviceTypeRoutes.js";
-import attendanceRoutes from "./Routes/attendanceRoutes.js";
 import DocumentRoutes from "./Routes/DocumentRoutes.js";
 import tasksRoutes from "./Routes/Tasksroutes.js";
 import TeamRoutes from "./Routes/TeamRoutes.js";
@@ -121,7 +120,6 @@ app.use("/api/newproject", projectRoutes);
 app.use("/api", EventRoutes);
 app.use("/api", serviceTypeRoutes);
 app.use("/api/docs", DocumentRoutes);
-app.use("/api/attendance", attendanceRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/teams", TeamRoutes);
 // ================= FILE UPLOAD =================
