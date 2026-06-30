@@ -1,5 +1,5 @@
 import express from "express";
-import { verifyToken, isAdmin } from "../Middlewares/AuthMiddleware.js";
+import { verifyToken, isAdmin, isAdminOrHr, maskLeadDataForHr } from "../Middlewares/AuthMiddleware.js";
 import {
   deleteLead,
   addLead,
@@ -26,21 +26,21 @@ const router = express.Router();
 
 // just the routes
 router.post("/add", verifyToken, addLead);
-router.get("/all", verifyToken, getAllLeads);
+router.get("/all", verifyToken, maskLeadDataForHr, getAllLeads);
 router.delete("/delete/:id", verifyToken, deleteLead);
 router.put("/assign/:leadId", verifyToken, assignLead);
-router.get("/assigned", verifyToken, getAssignedLeads);
-router.get("/all-assigned", verifyToken, isAdmin, getAllAssignedLeads);
+router.get("/assigned", verifyToken, maskLeadDataForHr, getAssignedLeads);
+router.get("/all-assigned", verifyToken, isAdminOrHr, maskLeadDataForHr, getAllAssignedLeads);
 router.put("/unassign/:leadId", verifyToken, unassignLead);
-router.get("/new", verifyToken, getNewLeads);
+router.get("/new", verifyToken, maskLeadDataForHr, getNewLeads);
 router.put("/update-status/:leadId", verifyToken, updateLeadStatus);
-router.get("/closed", verifyToken, getClosedLeads);
+router.get("/closed", verifyToken, maskLeadDataForHr, getClosedLeads);
 router.get("/total-leads", getTotalLeads);
 router.get("/total-closed-leads", getTotalClosedLeads);
 router.get("/new-leads-this-month", getNewLeadsThisMonth);
-router.get("/recent-leads", getRecentLeads);
+router.get("/recent-leads", verifyToken, maskLeadDataForHr, getRecentLeads);
 router.get("/closed-leads-by-date", getClosedLeadsByDate);
-router.get("/team-leads", verifyToken, getTeamLeads);
+router.get("/team-leads", verifyToken, maskLeadDataForHr, getTeamLeads);
 router.post("/:leadId/comments", verifyToken, addLeadComment);
 router.put("/:leadId/follow-up", verifyToken, updateFollowUp);
 
@@ -252,7 +252,7 @@ router.get("/leads-performance", verifyToken, async (req, res) => {
 });
 
 //get the recently added leads from here
-router.get("/recent", verifyToken, async (req, res) => {
+router.get("/recent", verifyToken, maskLeadDataForHr, async (req, res) => {
   try {
     const userId = req.user.id;
     const leads = await Lead.find({ userId }).sort({ createdAt: -1 }).limit(20);

@@ -357,7 +357,7 @@ import { v2 as cloudinary } from "cloudinary";
 import UserModel from "../Models/UserModel.js";
 import AttendanceModel from "../Models/Attendance.js";
 import RoleTimingModel from "../Models/RoleTimingModel.js";
-import { verifyToken, isAdmin } from "../Middlewares/AuthMiddleware.js";
+import { verifyToken, isAdmin, isAdminOrHr } from "../Middlewares/AuthMiddleware.js";
 
 dotenv.config();
 
@@ -436,11 +436,11 @@ router.post("/register", async (req, res) => {
 });
 
 // Get All Users
-router.get("/users", verifyToken, isAdmin, async (req, res) => {
+router.get("/users", verifyToken, isAdminOrHr, async (req, res) => {
   try {
     const users = await UserModel.find(
       {},
-      "username email role joiningDate leaveBalance leaveRecords avatar customWorkHours customBreakTime"
+      "username email role joiningDate leaveBalance leaveRecords avatar customWorkHours customBreakTime designation phoneNumber salary address emergencyContact employeeStatus"
     );
     res.json(users);
   } catch (error) {
@@ -450,7 +450,7 @@ router.get("/users", verifyToken, isAdmin, async (req, res) => {
 });
 
 // Delete User
-router.delete("/users/:id", verifyToken, isAdmin, async (req, res) => {
+router.delete("/users/:id", verifyToken, isAdminOrHr, async (req, res) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -461,16 +461,51 @@ router.delete("/users/:id", verifyToken, isAdmin, async (req, res) => {
   }
 });
 
+// Global Leave Balance Update
+router.put("/users/global/leave-balance", verifyToken, isAdminOrHr, async (req, res) => {
+  const { leaveBalance, targetRole } = req.body;
+  if (leaveBalance === undefined) {
+    return res.status(400).json({ message: "Leave balance value is required." });
+  }
+
+  try {
+    const query = targetRole && targetRole !== "all" ? { role: targetRole } : {};
+    const result = await UserModel.updateMany(query, { $set: { leaveBalance: parseFloat(leaveBalance) } });
+    res.json({ message: `Successfully updated leave balance for ${result.modifiedCount} users.`, result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 // Update User
-router.put("/users/:id", verifyToken, isAdmin, async (req, res) => {
-  const { username, role, joiningDate } = req.body;
+router.put("/users/:id", verifyToken, isAdminOrHr, async (req, res) => {
+  const { 
+    username, email, role, joiningDate, leaveBalance,
+    designation, phoneNumber, salary, address, emergencyContact, employeeStatus,
+    customWorkHours, customBreakTime, password
+  } = req.body;
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    user.username = username || user.username;
-    user.role = role || user.role;
-    user.joiningDate = joiningDate || user.joiningDate;
+    user.username = username !== undefined ? username : user.username;
+    user.email = email !== undefined ? email : user.email;
+    user.role = role !== undefined ? role : user.role;
+    user.joiningDate = joiningDate !== undefined ? joiningDate : user.joiningDate;
+    user.leaveBalance = leaveBalance !== undefined ? leaveBalance : user.leaveBalance;
+    user.designation = designation !== undefined ? designation : user.designation;
+    user.phoneNumber = phoneNumber !== undefined ? phoneNumber : user.phoneNumber;
+    user.salary = salary !== undefined ? salary : user.salary;
+    user.address = address !== undefined ? address : user.address;
+    user.emergencyContact = emergencyContact !== undefined ? emergencyContact : user.emergencyContact;
+    user.employeeStatus = employeeStatus !== undefined ? employeeStatus : user.employeeStatus;
+    user.customWorkHours = customWorkHours !== undefined ? customWorkHours : user.customWorkHours;
+    user.customBreakTime = customBreakTime !== undefined ? customBreakTime : user.customBreakTime;
+
+    if (password && password.trim() !== "") {
+      user.password = password;
+    }
 
     await user.save();
     res.json({ message: "User updated successfully", user });
@@ -773,7 +808,7 @@ router.post("/attendance/clock-out", verifyToken, async (req, res) => {
 });
 
 // 6. Admin: Get Logs
-router.get("/admin/attendance-logs", verifyToken, isAdmin, async (req, res) => {
+router.get("/admin/attendance-logs", verifyToken, isAdminOrHr, async (req, res) => {
   const { startDate, endDate, userId } = req.query;
   try {
     let query = {};
@@ -789,7 +824,7 @@ router.get("/admin/attendance-logs", verifyToken, isAdmin, async (req, res) => {
 });
 
 // 7. Admin: Set Role Timings
-router.put("/admin/role-timings", verifyToken, isAdmin, async (req, res) => {
+router.put("/admin/role-timings", verifyToken, isAdminOrHr, async (req, res) => {
   const { role, requiredWorkHours, allottedBreakTime } = req.body;
   try {
     let roleTiming = await RoleTimingModel.findOneAndUpdate(
@@ -805,7 +840,7 @@ router.put("/admin/role-timings", verifyToken, isAdmin, async (req, res) => {
 });
 
 // 8. Admin: Set User Exceptions
-router.put("/admin/user-exceptions/:userId", verifyToken, isAdmin, async (req, res) => {
+router.put("/admin/user-exceptions/:userId", verifyToken, isAdminOrHr, async (req, res) => {
   const { customWorkHours, customBreakTime } = req.body;
   try {
     const user = await UserModel.findByIdAndUpdate(
@@ -821,7 +856,7 @@ router.put("/admin/user-exceptions/:userId", verifyToken, isAdmin, async (req, r
 });
 
 // 9. Admin: Get Role Timings (To populate UI)
-router.get("/admin/role-timings", verifyToken, isAdmin, async (req, res) => {
+router.get("/admin/role-timings", verifyToken, isAdminOrHr, async (req, res) => {
   try {
     const timings = await RoleTimingModel.find();
     res.json(timings);

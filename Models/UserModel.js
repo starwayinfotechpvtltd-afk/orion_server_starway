@@ -72,7 +72,7 @@ const UserSchema = new Schema({
   password: { type: String, required: true },
   role: {
     type: String,
-    enum: ["caller", "developer", "admin", "manager"],
+    enum: ["caller", "developer", "admin", "manager", "hr"],
     default: "caller",
   },
   avatar: { 
@@ -93,6 +93,17 @@ const UserSchema = new Schema({
   // --- NEW: User Exceptions for Attendance ---
   customWorkHours: { type: Number, default: null }, // In minutes (e.g. 480 for 8 hours)
   customBreakTime: { type: Number, default: null }, // In minutes
+  // --- NEW: Extra Employee Details for HR ---
+  designation: { type: String, default: "" },
+  phoneNumber: { type: String, default: "" },
+  salary: { type: Number, default: 0 },
+  address: { type: String, default: "" },
+  emergencyContact: { type: String, default: "" },
+  employeeStatus: { 
+    type: String, 
+    enum: ["active", "suspended", "terminated"], 
+    default: "active" 
+  },
 });
 
 // hash password

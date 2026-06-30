@@ -22,6 +22,11 @@ import DocumentRoutes from "./Routes/DocumentRoutes.js";
 import tasksRoutes from "./Routes/Tasksroutes.js";
 import TeamRoutes from "./Routes/TeamRoutes.js";
 import scheduledTaskRoutes from "./Routes/scheduledTaskRoutes.js";
+import NoticeRoutes from "./Routes/NoticeRoutes.js";
+import ApplicationRoutes from "./Routes/ApplicationRoutes.js";
+import DesignationRoutes from "./Routes/DesignationRoutes.js";
+import ReminderRoutes from "./Routes/ReminderRoutes.js";
+import SheetRoutes from "./Routes/SheetRoutes.js";
 
 
 const app = express();
@@ -125,6 +130,11 @@ app.use("/api/docs", DocumentRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/teams", TeamRoutes);
 app.use("/api/scheduled-tasks", scheduledTaskRoutes);
+app.use("/api/notices", NoticeRoutes);
+app.use("/api/applications", ApplicationRoutes);
+app.use("/api/designations", DesignationRoutes);
+app.use("/api/reminders", ReminderRoutes);
+app.use("/api/sheets", SheetRoutes);
 
 // ================= FILE UPLOAD =================
 app.post("/api/upload", upload.array("images", 10), (req, res) => {

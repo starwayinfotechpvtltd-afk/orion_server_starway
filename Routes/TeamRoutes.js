@@ -1,11 +1,11 @@
 import express from "express";
 import TeamModel from "../Models/TeamModel.js";
-import { verifyToken, isAdmin } from "../Middlewares/AuthMiddleware.js";
+import { verifyToken, isAdmin, isAdminOrHr } from "../Middlewares/AuthMiddleware.js";
 
 const router = express.Router();
 
 // Create a Team
-router.post("/", verifyToken, isAdmin, async (req, res) => {
+router.post("/", verifyToken, isAdminOrHr, async (req, res) => {
   const { teamName, managerId, memberIds } = req.body;
   try {
     const newTeam = new TeamModel({
@@ -33,7 +33,7 @@ router.get("/", verifyToken, async (req, res) => {
 });
 
 // Update Team (Edit Name, Manager, or Members)
-router.put("/:id", verifyToken, isAdmin, async (req, res) => {
+router.put("/:id", verifyToken, isAdminOrHr, async (req, res) => {
   const { teamName, managerId, memberIds } = req.body;
   try {
     const updatedTeam = await TeamModel.findByIdAndUpdate(
@@ -48,7 +48,7 @@ router.put("/:id", verifyToken, isAdmin, async (req, res) => {
 });
 
 // Delete Team
-router.delete("/:id", verifyToken, isAdmin, async (req, res) => {
+router.delete("/:id", verifyToken, isAdminOrHr, async (req, res) => {
   try {
     await TeamModel.findByIdAndDelete(req.params.id);
     res.json({ message: "Team deleted successfully" });

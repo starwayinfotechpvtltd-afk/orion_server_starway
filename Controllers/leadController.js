@@ -83,7 +83,8 @@ export const getClosedLeadsByDate = async (req, res) => {
 // Get all leads
 export const getAllLeads = async (req, res) => {
   try {
-    const leads = await Lead.find({ userId: req.user.id })
+    const query = (req.user.role === "admin" || req.user.role === "hr") ? {} : { userId: req.user.id };
+    const leads = await Lead.find(query)
       .populate("assignedTo", "username email")
       .populate("assignedBy", "username email");
 
@@ -380,9 +381,8 @@ export const updateLeadStatus = async (req, res) => {
 
 export const getClosedLeads = async (req, res) => {
   try {
-    const userId = req.user.id;
-
-    const closedLeads = await Lead.find({ status: "closed", userId })
+    const query = (req.user.role === "admin" || req.user.role === "hr") ? { status: "closed" } : { status: "closed", userId: req.user.id };
+    const closedLeads = await Lead.find(query)
       .populate("assignedTo", "username email")
       .populate("assignedBy", "username email");
 
