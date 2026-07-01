@@ -14,6 +14,9 @@ const ProjectSchema = new mongoose.Schema(
         username: { type: String, required: true },
       }
     ],
+    excelAuthorizedDevelopers: [
+      { type: String }
+    ],
     serviceType: { type: [String], required: true },
     referenceSite: { type: String },
     businessNiche: { type: String },

@@ -16,6 +16,7 @@ export const createProject = async (req, res) => {
       businessNiche,
       comments,
       subscriptionType,
+      excelAuthorizedDevelopers,
     } = req.body;
 
     if (!req.user || !req.user.id) {
@@ -37,6 +38,7 @@ export const createProject = async (req, res) => {
       clientNumber,
       amount,
       assignedDeveloper, 
+      excelAuthorizedDevelopers: excelAuthorizedDevelopers || [],
       serviceType,
       referenceSite,
       businessNiche,
