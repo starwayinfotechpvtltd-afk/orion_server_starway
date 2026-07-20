@@ -27,10 +27,7 @@ export const getDeveloperDashboardData = async (req, res) => {
         // 4. MANUALLY FETCH AND ATTACH AVATARS
         // ---------------------------------------------------------
         const uniqueUserIds = new Set();
-        tasks.forEach(t => {
-            if (t.assignedTo?.id) uniqueUserIds.add(t.assignedTo.id.toString());
-            if (t.createdBy?.id) uniqueUserIds.add(t.createdBy.id.toString());
-        });
+
         completions.forEach(c => {
             if (c.completedBy?.id) uniqueUserIds.add(c.completedBy.id.toString());
         });
