@@ -4,14 +4,10 @@ import UserModel from "../Models/UserModel.js";
 
 export const getDeveloperDashboardData = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const userRole = req.user.role;
-
         // 1. Determine which projects this user is allowed to see
         let projectQuery = {};
         if (userRole !== "admin" && userRole !== "hr") {
             const user = await UserModel.findById(userId).select("username").lean();
-            const username = user?.username || "";
 
             projectQuery = {
                 $or: [
@@ -20,7 +16,6 @@ export const getDeveloperDashboardData = async (req, res) => {
                 ]
             };
         }
-
 
 
         // ---------------------------------------------------------
@@ -34,14 +29,8 @@ export const getDeveloperDashboardData = async (req, res) => {
 
         // Fetch all those users from DB and map their avatars
         const users = await UserModel.find({ _id: { $in: Array.from(uniqueUserIds) } })
-                                     .select("avatar").lean();
-        
-       
-
+                                     .select("avatar").lean()
         // 5. Map the project name & inject avatars to the tasks
-
-
-
 
         const formattedCompletions = completions.map(c => {
             if (c.completedBy?.id && avatarMap[c.completedBy.id.toString()]) {
