@@ -21,15 +21,7 @@ export const getDeveloperDashboardData = async (req, res) => {
             };
         }
 
-        // 2. Fetch Projects
-        const projects = await Project.find(projectQuery).lean();
-        const projectIds = projects.map(p => p._id);
 
-        // 3. Fetch Tasks & Completions
-        const [tasks, completions] = await Promise.all([
-            Task.find({ projectId: { $in: projectIds } }).lean(),
-            TaskCompletion.find({ projectId: { $in: projectIds } }).lean()
-        ]);
 
         // ---------------------------------------------------------
         // 4. MANUALLY FETCH AND ATTACH AVATARS
@@ -47,29 +39,12 @@ export const getDeveloperDashboardData = async (req, res) => {
         const users = await UserModel.find({ _id: { $in: Array.from(uniqueUserIds) } })
                                      .select("avatar").lean();
         
-        const avatarMap = {};
-        users.forEach(u => {
-            avatarMap[u._id.toString()] = u.avatar;
-        });
+       
 
         // 5. Map the project name & inject avatars to the tasks
-        const projectMap = {};
-        projects.forEach(p => {
-            projectMap[p._id.toString()] = p.projectName || "Unknown";
-        });
 
-        const formattedTasks = tasks.map(t => {
-            if (t.assignedTo?.id && avatarMap[t.assignedTo.id.toString()]) {
-                t.assignedTo.avatar = avatarMap[t.assignedTo.id.toString()];
-            }
-            if (t.createdBy?.id && avatarMap[t.createdBy.id.toString()]) {
-                t.createdBy.avatar = avatarMap[t.createdBy.id.toString()];
-            }
-            return {
-                ...t,
-                projectName: projectMap[t.projectId?.toString()] || "Unknown"
-            };
-        });
+
+
 
         const formattedCompletions = completions.map(c => {
             if (c.completedBy?.id && avatarMap[c.completedBy.id.toString()]) {
@@ -79,12 +54,6 @@ export const getDeveloperDashboardData = async (req, res) => {
         });
         // ---------------------------------------------------------
 
-        // 6. Send payload back
-        res.status(200).json({
-            projects,
-            tasks: formattedTasks,
-            completions: formattedCompletions
-        });
 
     } catch (error) {
         console.error("Dashboard Data error:", error);
