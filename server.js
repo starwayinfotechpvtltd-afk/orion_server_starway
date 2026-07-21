@@ -112,7 +112,7 @@ const upload = multer({
 // ================= HEALTH CHECK =================
 app.get("/", (req, res) => {
   res.status(200).json({
-    success: true,
+    success: true, 
     message: "API Running",
   });
 });
