@@ -116,39 +116,18 @@ export const unassignLead = async (req, res) => {
   }
 };
 
-// Delete a lead
-// export const deleteLead = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const lead = await Lead.findById(id);
 
-//     if (!lead) {
-//       return res.status(404).json({ message: "Lead not found" });
-//     }
 
-//     if (lead.userId.toString() !== req.user.id) {
-//       return res.status(403).json({ message: "Unauthorized" });
-//     }
-
-//     await Lead.findByIdAndDelete(id);
-//     res.status(200).json({ message: "Lead deleted successfully" });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error deleting lead", error: error.message });
-//   }
-// };
-
-export const deleteLead = async (req, res) => {
+export const deleteeLead = async (req, res) => {
   try {
     const { id } = req.params;
-    const lead = await Lead.findById(id);
+    const lead = await LeadName.findById(id);
 
     if (!lead) {
       return res.status(404).json({ message: "Lead not found" });
     }
 
-    if (lead.status === "Closed") {
+    if (leadName.status === "Closed") {
       return res
         .status(403)
         .json({ message: "Closed leads cannot be deleted" });
@@ -161,38 +140,7 @@ export const deleteLead = async (req, res) => {
   }
 };
 
-// // Assign lead to an Admin/Manager
-// export const assignLead = async (req, res) => {
-//   try {
-//     const { userId } = req.body;
-//     const { leadId } = req.params;
 
-//     const user = await UserModel.findById(userId);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     const updatedLead = await Lead.findByIdAndUpdate(
-//       leadId,
-//       {
-//         assignedTo: userId,
-//         assignedBy: req.user.id,
-//       },
-//       { new: true }
-//     )
-//       .populate("assignedTo", "username email")
-//       .populate("assignedBy", "username email");
-
-//     if (!updatedLead) {
-//       return res.status(404).json({ message: "Lead not found" });
-//     }
-
-//     res.status(200).json(updatedLead);
-//   } catch (error) {
-//     console.error("Error assigning lead:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 export const assignLead = async (req, res) => {
   const { leadId } = req.params;
